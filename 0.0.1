@@ -1,0 +1,139 @@
+function Show-Main-Menu {
+    Clear-Host
+    Write-Host "===============================================" -ForegroundColor Magenta
+    Write-Host "       🚀 NEO-GEN TITAN TOOLBOX [V.SUPREME]    " -ForegroundColor White
+    Write-Host "===============================================" -ForegroundColor Magenta
+    Write-Host " [1] 🛠️ TITAN-FORGE ( For R5 5500 + 5060Ti ONLY )" -ForegroundColor Green
+    Write-Host " [2] 🛡️ UNIVERSAL-CLEAN ( For All PC & Safe )" -ForegroundColor Cyan
+    Write-Host " [3] 🎯 REACH MODE ( For Fivem ONLY )" -ForegroundColor Yellow
+    Write-Host " [4] 🧹 DEEP-PURGE ( Clean System )" -ForegroundColor White
+    Write-Host " [5] 🎬 WORK-FLOW ( Stream & Edit )" -ForegroundColor Magenta
+    Write-Host " [6] 🌐 NET-BOOST ( Reset Network )" -ForegroundColor Blue
+    Write-Host " [7] 🔄 RESTART ( Reboot System )" -ForegroundColor Red
+    Write-Host " [8] ❌ EXIT ( Close Program )" -ForegroundColor White
+    Write-Host "===============================================" -ForegroundColor Magenta
+}
+
+function Show-Titan-Menu {
+    Clear-Host
+    Write-Host "===============================================" -ForegroundColor Green
+    Write-Host "       🔥 TITAN-FORGE: R5 5500 + 5060Ti        " -ForegroundColor White
+    Write-Host "===============================================" -ForegroundColor Green
+    Write-Host " [1] 🚀 Full Supreme ( ปลดล็อกพลังสูงสุด + Clean )" -ForegroundColor Green
+    Write-Host " [2] 🎬 Work-Flow ( เน้นสตรีม/ตัดต่อ + Clean )" -ForegroundColor Magenta
+    Write-Host " [3] ⬅️ Back ( กลับหน้าหลัก )                   " -ForegroundColor White
+    Write-Host "===============================================" -ForegroundColor Green
+}
+
+function Show-Universal-Menu {
+    Clear-Host
+    Write-Host "===============================================" -ForegroundColor Cyan
+    Write-Host "       🛡️ UNIVERSAL CLEAN V5 (SAFE MODE)        " -ForegroundColor White
+    Write-Host "===============================================" -ForegroundColor Cyan
+    Write-Host " [1] ✅ APPLY UNIVERSAL CLEAN (ปรับลื่น + Clean)" -ForegroundColor Green
+    Write-Host " [2] ⬅️ BACK (กลับหน้าหลัก)" -ForegroundColor White
+    Write-Host "===============================================" -ForegroundColor Cyan
+}
+
+function Show-Reach-Menu {
+    Clear-Host
+    Write-Host "===============================================" -ForegroundColor Red
+    Write-Host "       🎯 REACH OPTIMIZER                      " -ForegroundColor White
+    Write-Host "===============================================" -ForegroundColor Red
+    Write-Host " [1] ✅ SETTINGS REACH ( ACTIVE )              " -ForegroundColor Green
+    Write-Host " [2] 🔄 RESET + CLEAN                          " -ForegroundColor Cyan
+    Write-Host " [3] ⬅️ BACK ( กลับหน้าหลัก )                   " -ForegroundColor White
+    Write-Host "===============================================" -ForegroundColor Red
+}
+
+function Clear-Trace {
+    Write-Host "กำลังกวาดล้างหลักฐานการปรับแต่ง..." -ForegroundColor Cyan
+    Clear-History
+    if (Test-Path (Get-PSReadlineOption).HistorySavePath) { Remove-Item (Get-PSReadlineOption).HistorySavePath -Force -ErrorAction SilentlyContinue }
+    reg delete "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU" /va /f
+    $p = @("$env:TEMP\*", "$env:SystemRoot\Temp\*", "$env:LOCALAPPDATA\Temp\*", "$env:SystemRoot\Prefetch\*")
+    foreach ($i in $p) { Remove-Item -Path $i -Recurse -Force -ErrorAction SilentlyContinue }
+    Write-Host "--> [System] Clean ขยะและประวัติเรียบร้อยแล้ว!" -ForegroundColor Gray
+}
+
+function Apply-Universal-V5 {
+    Write-Host "กำลังติดตั้งระบบ UNIVERSAL CLEAN (V5) - ปลอดภัยและลื่นไหลทุกเกม..." -ForegroundColor Green
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" -Name "SystemResponsiveness" -Value 10
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" -Name "NetworkThrottlingIndex" -Value 0xffffffff
+    $kbPath = "HKCU:\Control Panel\Keyboard"; Set-ItemProperty -Path $kbPath -Name "KeyboardDelay" -Value 0; Set-ItemProperty -Path $kbPath -Name "KeyboardSpeed" -Value 31
+    Set-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSpeed" -Value 0
+    $taskPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games"
+    Set-ItemProperty -Path $taskPath -Name "GPU Priority" -Value 8; Set-ItemProperty -Path $taskPath -Name "Priority" -Value 6; Set-ItemProperty -Path $taskPath -Name "Scheduling Category" -Value "High"
+    reg add "HKLM\SYSTEM\CurrentControlSet\Control\PriorityControl" /v "Win32PrioritySeparation" /t REG_DWORD /d 28 /f
+    bcdedit /set disabledynamictick yes; bcdedit /set useplatformclock no; bcdedit /set tscsyncpolicy Enhanced
+    netsh int tcp set global autotuninglevel=normal; netsh int tcp set global rss=enabled; netsh int tcp set global fastopen=enabled
+    $interfaces = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces"
+    Get-ChildItem $interfaces | ForEach-Object {
+        Set-ItemProperty -Path $_.PSPath -Name "TcpAckFrequency" -Value 1 -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $_.PSPath -Name "TCPNoDelay" -Value 1 -ErrorAction SilentlyContinue
+    }
+    Write-Host "===========================================" -ForegroundColor Green
+    Write-Host "    [ UNIVERSAL CLEAN V5 : READY ]" -ForegroundColor White
+    Write-Host "===========================================" -ForegroundColor Green
+    Clear-Trace
+}
+
+do {
+    Show-Main-Menu
+    $choice = Read-Host "กรุณาเลือกตัวเลข"
+
+    if ($choice -eq '1') {
+        do {
+            Show-Titan-Menu; $sub1 = Read-Host "เลือกตัวเลข"
+            if ($sub1 -eq '1') {
+                Write-Host "กำลังติดตั้ง NEO-GEN TITAN SUPREME..." -ForegroundColor Red
+                netsh int tcp set global initialrto=120; netsh int tcp set global congestionprovider=ctcp
+                $taskPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games"
+                Set-ItemProperty -Path $taskPath -Name "GPU Priority" -Value 31; Set-ItemProperty -Path $taskPath -Name "Priority" -Value 8; Set-ItemProperty -Path $taskPath -Name "Scheduling Category" -Value "High"
+                reg add "HKLM\SYSTEM\CurrentControlSet\Control\PriorityControl" /v "Win32PrioritySeparation" /t REG_DWORD /d 40 /f
+                Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" -Name "IoPageLockLimit" -Value 2097152
+                Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" -Name "SystemResponsiveness" -Value 0
+                bcdedit /set disabledynamictick yes; bcdedit /set useplatformclock no; bcdedit /set tscsyncpolicy Enhanced
+                Clear-Trace; Pause
+            }
+            elseif ($sub1 -eq '2') {
+                Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" -Name "SystemResponsiveness" -Value 0
+                Clear-Trace; Pause
+            }
+        } while ($sub1 -ne '3')
+    }
+    elseif ($choice -eq '2') {
+        do { Show-Universal-Menu; $subU = Read-Host "เลือกตัวเลข"; if ($subU -eq '1') { Apply-Universal-V5; Pause } } while ($subU -ne '2')
+    }
+    elseif ($choice -eq '3') {
+        do {
+            Show-Reach-Menu; $sub2 = Read-Host "เลือกตัวเลข"
+            if ($sub2 -eq '1') {
+                Write-Host "กำลังติดตั้งระบบ REACH..." -ForegroundColor Red
+                $tcp = "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
+                Set-ItemProperty -Path $tcp -Name "TcpMaxDataRetransmissions" -Value 10; Set-ItemProperty -Path $tcp -Name "TcpAckFrequency" -Value 1; Set-ItemProperty -Path $tcp -Name "TcpDelAckTicks" -Value 0
+                netsh int tcp set global segmentsize=1452; netsh int tcp set global autotuninglevel=experimental
+                Set-NetTCPSetting -SettingName InternetCustom -MinRto 5 -InitialRto 80 -CoalescingFilterMS 0
+                Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" -Name "NetworkThrottlingIndex" -Value 0xFFFFFFFF
+                Get-NetAdapter | Set-NetAdapterAdvancedProperty -DisplayName "Interrupt Moderation" -DisplayValue "Disabled" -ErrorAction SilentlyContinue
+                reg add "HKLM\SYSTEM\CurrentControlSet\Control\PriorityControl" /v "Win32PrioritySeparation" /t REG_DWORD /d 26 /f
+                reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games" /v "GPU Priority" /t REG_DWORD /d 18 /f
+                $mouse = "HKCU:\Control Panel\Mouse"; Set-ItemProperty -Path $mouse -Name "MouseSpeed" -Value 0; Set-ItemProperty -Path $mouse -Name "MouseThreshold1" -Value 0; Set-ItemProperty -Path $mouse -Name "MouseThreshold2" -Value 0
+                bcdedit /set useplatformclock no; bcdedit /set tscsyncpolicy Enhanced; ipconfig /flushdns; netsh winsock reset; netsh int ip reset
+                Write-Host "    [ REACH : INSTALLED ]" -ForegroundColor White
+                Clear-Trace; Pause
+            }
+            elseif ($sub2 -eq '2') { Apply-Universal-V5; Pause }
+        } while ($sub2 -ne '3')
+    }
+    elseif ($choice -eq '4') { Clear-Trace; Pause }
+    elseif ($choice -eq '5') { 
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" -Name "SystemResponsiveness" -Value 0
+        Clear-Trace; Pause 
+    }
+    elseif ($choice -eq '6') { netsh int ip reset; netsh winsock reset; ipconfig /flushdns; Clear-Trace; Pause }
+    elseif ($choice -eq '7') { 
+        $conf = Read-Host "คุณต้องการ Restart เครื่องใช่หรือไม่? (y/n)"
+        if ($conf -eq 'y') { Restart-Computer }
+    }
+} while ($choice -ne '8')
